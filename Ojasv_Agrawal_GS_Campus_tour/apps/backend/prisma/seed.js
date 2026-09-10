@@ -1,0 +1,34 @@
+import "dotenv/config";
+import bcrypt from "bcryptjs";
+import { readFileSync } from "node:fs";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
+
+function panorama(title, sky="#86b9db", ground="#66835d") {
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1200"><defs><linearGradient id="s" x2="0" y2="1"><stop stop-color="${sky}"/><stop offset="1" stop-color="#eaf4f7"/></linearGradient></defs><rect width="2400" height="650" fill="url(#s)"/><rect y="650" width="2400" height="550" fill="${ground}"/><path d="M0 690h400V390h420v300h300V330h560v360h270V460h450v310H0z" fill="#eee8d8"/><path d="M70 620h250V445H70zm1130 0h400V390h-400z" fill="#0b2545" opacity=".78"/><path d="M0 900 Q600 760 1200 900T2400 880v320H0z" fill="#526c4d"/><text x="1200" y="170" text-anchor="middle" font-family="Georgia" font-size="82" font-weight="bold" fill="white">${title}</text></svg>`;
+  return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
+}
+
+const stops=[
+  {id:"sgsits-main-gate",title:"SGSITS Main Gate",district:"South Campus",category:"Entrance",mapX:42,mapY:91,story:"The Main Gate is the primary visitor entrance to the SGSITS campus from Park Road and the natural starting point for the virtual campus route.",history:"SGSITS has served technical education in central India since 1952. The main entrance connects the historic institute campus with the city of Indore.",audioGuide:"Welcome to SGSITS Indore. You are at the Main Gate on Park Road. Begin your virtual tour here and follow the animated route to any campus landmark.",bestTime:"Open during institute hours",accessibility:"Level approach from Park Road"},
+  {id:"sgsits-front-gate",title:"SGSITS Front Gate",district:"South-East Campus",category:"Entrance",mapX:69,mapY:91,story:"The Front Gate provides direct access to the eastern side of the institute and is a familiar arrival point for students and visitors.",history:"This gate forms part of the institute frontage along SGSITS Road and links the campus to nearby public transport and city routes.",audioGuide:"This is the SGSITS Front Gate on the south-eastern edge of campus. Use it to reach the eastern academic and activity zones.",bestTime:"Open during institute hours",accessibility:"Road-level visitor access"},
+  {id:"civil-ground",title:"Civil Experimentation Ground",district:"West Campus",category:"Academic Facility",mapX:11,mapY:72,story:"The Civil Experimentation Ground is an open practical-learning area used to connect classroom principles with field-scale civil engineering work.",history:"Practical experimentation has long been central to engineering education at SGSITS, giving students space to observe, measure and test beyond the laboratory.",audioGuide:"You are viewing the Civil Experimentation Ground, an outdoor learning space supporting hands-on civil engineering education.",bestTime:"Academic hours",accessibility:"Open ground; assistance may be useful"},
+  {id:"golden-gate",title:"Golden Gate SGSITS",district:"North-East Campus",category:"Campus Landmark",mapX:92,mapY:47,story:"Golden Gate is a prominent landmark on the north-eastern edge of the mapped campus and a useful orientation point for campus navigation.",history:"The landmark helps define the institute boundary and connects the campus route with Yeshwant Niwas Road.",audioGuide:"This is Golden Gate, a major orientation landmark on the north-eastern side of SGSITS campus.",bestTime:"Visible throughout the day",accessibility:"Approachable by campus road"},
+  {id:"academic-core",title:"Central Academic Block",district:"Academic Zone",category:"Academic Building",mapX:56,mapY:73,story:"The central academic area brings together lecture spaces, laboratories and everyday student activity at the heart of SGSITS.",history:"Across decades of technical education, the academic blocks have supported engineering, science and interdisciplinary learning for generations of students.",audioGuide:"Welcome to the central academic zone of SGSITS, the working heart of teaching, laboratories and student learning.",bestTime:"Monday to Friday, 9 AM–5 PM",accessibility:"Campus pathways connect the main entrances"}
+];
+
+async function main(){
+  const passwordHash=await bcrypt.hash("admin123",10);
+  const admin=await prisma.user.upsert({where:{email:"admin@sgsits.ac.in"},create:{email:"admin@sgsits.ac.in",name:"SGSITS College Admin",passwordHash,role:"ADMIN"},update:{name:"SGSITS College Admin",passwordHash,role:"ADMIN"}});
+  for(const stop of stops){
+    const pano=panorama(stop.title);
+    await prisma.place.upsert({where:{id:stop.id},create:{...stop,authorId:admin.id,latitude:0,longitude:0,durationMinutes:20,travelTip:"Select another numbered map marker to continue the tour.",localFood:null,safetyNote:"Follow institute visitor guidelines.",videoUrl:null,panoramaDataUrl:pano,imageMime:"image/svg+xml",imageSizeBytes:pano.length,status:"PUBLISHED"},update:{...stop,authorId:admin.id,latitude:0,longitude:0,panoramaDataUrl:pano,imageMime:"image/svg+xml",imageSizeBytes:pano.length}})
+  }
+  const route=await prisma.route.upsert({where:{sourceId_destinationId:{sourceId:"sgsits-main-gate",destinationId:"academic-core"}},create:{title:"Main Gate to Central Academic Block",sourceId:"sgsits-main-gate",destinationId:"academic-core",pathJson:JSON.stringify([{x:42,y:91},{x:44,y:84},{x:50,y:78},{x:56,y:73}]),instructionsJson:JSON.stringify(["Enter through the Main Gate","Continue north on the central campus road","Turn right toward the academic zone"]),durationMinutes:4,distanceMeters:280,authorId:admin.id},update:{}});
+  const views=["Main Gate entrance","Central campus road","Academic Block approach"];
+  const sampleDataUrl=`data:image/png;base64,${readFileSync(new URL("../../frontend/public/sgsits-campus-map.png",import.meta.url)).toString("base64")}`;
+  const demoMedia=await prisma.routeMedia.findMany({where:{routeId:route.id,caption:{in:views}}});
+  if(demoMedia.length===0)await prisma.routeMedia.createMany({data:views.map((caption,sortOrder)=>({routeId:route.id,caption,dataUrl:sampleDataUrl,mimeType:"image/png",sizeBytes:sampleDataUrl.length,sortOrder}))});
+  else for(const media of demoMedia)if(media.mimeType==="image/svg+xml")await prisma.routeMedia.update({where:{id:media.id},data:{dataUrl:sampleDataUrl,mimeType:"image/png",sizeBytes:sampleDataUrl.length}});
+}
+main().then(async()=>{await prisma.$disconnect();console.log("Seeded SGSITS tour. Admin: admin@sgsits.ac.in / admin123")}).catch(async e=>{console.error(e);await prisma.$disconnect();process.exit(1)});
