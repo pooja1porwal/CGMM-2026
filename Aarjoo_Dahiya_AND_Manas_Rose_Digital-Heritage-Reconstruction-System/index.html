@@ -1,0 +1,574 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="HeritageX — Digital Heritage Museum of India"
+    >
+
+    <title>
+        HeritageX — India's Living Heritage
+    </title>
+
+</head>
+
+
+<body>
+
+    <div id="app">
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+
+        <header class="site-header">
+
+            <div class="header-brand">
+
+                <div class="header-kicker">
+                    HERITAGEX · MADHYA PRADESH & MALWA HERITAGE
+                </div>
+
+                <h1>
+                    Living Heritage of Madhya Pradesh
+                </h1>
+
+                <p>
+                    Immersive 3D digital heritage museum showcasing Indore, Malwa and iconic national landmarks.
+                </p>
+
+            </div>
+
+
+            <div class="header-actions">
+
+                <button
+                    id="compare-home-btn"
+                    class="header-button"
+                >
+                    Timeline & Compare
+                </button>
+
+                <button
+                    id="preservation-home-btn"
+                    class="header-button"
+                >
+                    Preserve
+                </button>
+
+                <button
+                    id="sources-home-btn"
+                    class="header-button"
+                >
+                    Sources
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- =====================================================
+             MAIN
+        ====================================================== -->
+
+        <div class="app-layout">
+
+
+            <!-- =================================================
+                 LEFT NAVIGATION
+            ================================================== -->
+
+            <aside
+                id="monument-nav"
+                class="monument-navigation"
+            ></aside>
+
+
+            <!-- =================================================
+                 CONTENT
+            ================================================== -->
+
+            <main class="monument-main">
+
+
+                <!-- =================================================
+                     HERO
+                ================================================== -->
+
+                <section
+                    id="hero-stage"
+                    class="hero-stage"
+                >
+
+                    <!-- Real local photograph -->
+
+                    <div
+                        id="stage-backdrop"
+                        class="stage-backdrop"
+                    ></div>
+
+
+                    <!-- Dark overlays -->
+
+                    <div class="stage-overlay"></div>
+
+                    <div class="stage-bottom-fade"></div>
+
+
+                    <!-- Actual 3D monument -->
+
+                    <div
+                        id="three-container"
+                        class="three-container"
+                    ></div>
+
+
+                    <!-- small title -->
+
+                    <div
+                        class="hero-label"
+                    >
+                        VIRTUAL HERITAGE EXPERIENCE
+                    </div>
+
+
+                    <div
+                        class="hero-help"
+                    >
+                        Drag to explore · Scroll to zoom
+                    </div>
+
+
+                    <!-- bottom description -->
+
+                    <div
+                        id="stage-caption"
+                        class="hero-caption"
+                    >
+                        Explore the monument from every angle.
+                    </div>
+
+
+                    <!-- viewer controls -->
+
+                    <div
+                        class="hero-controls"
+                    >
+
+                        <button
+                            id="reset-btn"
+                            class="viewer-button"
+                        >
+                            ↺ Reset
+                        </button>
+
+                        <button
+                            id="rotate-btn"
+                            class="viewer-button"
+                        >
+                            ⟳ Rotate
+                        </button>
+
+                        <button
+                            id="lighting-btn"
+                            class="viewer-button"
+                        >
+                            🌅 Sunset
+                        </button>
+
+                        <button
+                            id="tour-btn"
+                            class="viewer-button"
+                        >
+                            🧭 Tour
+                        </button>
+
+                        <button
+                            id="audio-btn"
+                            class="viewer-button"
+                        >
+                            🔊 Guide
+                        </button>
+
+                        <button
+                            id="ambient-btn"
+                            class="viewer-button"
+                            title="Toggle Meditative Heritage Soundscape"
+                        >
+                            🎵 Ambient
+                        </button>
+
+                        <button
+                            id="fullscreen-btn"
+                            class="viewer-button"
+                        >
+                            ⛶
+                        </button>
+
+                    </div>
+
+
+                    <!-- hotspot info -->
+
+                    <aside
+                        id="hotspot-panel"
+                        class="floating-panel hidden"
+                    >
+
+                        <button
+                            id="close-hotspot"
+                            class="panel-close"
+                        >
+                            ×
+                        </button>
+
+
+                        <div class="panel-kicker">
+                            ARCHITECTURAL DETAIL
+                        </div>
+
+
+                        <h3
+                            id="hotspot-title"
+                        >
+                            —
+                        </h3>
+
+
+                        <p
+                            id="hotspot-description"
+                        >
+                            —
+                        </p>
+
+
+                        <div
+                            class="panel-actions"
+                        >
+
+                            <button
+                                id="hotspot-focus"
+                                class="panel-button"
+                            >
+                                🎯 Focus
+                            </button>
+
+                            <button
+                                id="hotspot-speak"
+                                class="panel-button"
+                            >
+                                🔊 Listen
+                            </button>
+
+                        </div>
+
+                    </aside>
+
+
+                    <!-- guided tour -->
+
+                    <aside
+                        id="tour-panel"
+                        class="tour-panel hidden"
+                    >
+
+                        <button
+                            id="close-tour"
+                            class="panel-close"
+                        >
+                            ×
+                        </button>
+
+
+                        <div class="panel-kicker">
+                            VIRTUAL TOUR
+                        </div>
+
+
+                        <h3>
+                            Walk Through the Site
+                        </h3>
+
+
+                        <div
+                            id="tour-list"
+                            class="tour-list"
+                        ></div>
+
+                        <div class="mt-4 pt-3 border-t border-white/10">
+                            <button
+                                id="auto-tour-btn"
+                                class="panel-button w-full flex items-center justify-center gap-2"
+                            >
+                                ▶ Auto Play Tour
+                            </button>
+                        </div>
+
+                    </aside>
+
+                </section>
+
+
+                <!-- =================================================
+                     MONUMENT HEADER
+                ================================================== -->
+
+                <section class="monument-header">
+
+                    <div
+                        id="mon-era"
+                        class="section-kicker"
+                    >
+                        —
+                    </div>
+
+
+                    <h2
+                        id="mon-name"
+                    >
+                        —
+                    </h2>
+
+
+                    <p
+                        id="mon-tagline"
+                    >
+                        —
+                    </p>
+
+
+                    <div
+                        id="fact-strip"
+                        class="fact-strip"
+                    ></div>
+
+                </section>
+
+
+                <!-- =================================================
+                     TABS
+                ================================================== -->
+
+                <div class="tab-bar">
+
+                    <button
+                        class="tab-button active"
+                        data-tab="history"
+                    >
+                        Chronicle
+                    </button>
+
+                    <button
+                        class="tab-button"
+                        data-tab="gallery"
+                    >
+                        Gallery
+                    </button>
+
+                    <button
+                        class="tab-button"
+                        data-tab="architecture"
+                    >
+                        Architecture
+                    </button>
+
+                    <button
+                        class="tab-button"
+                        data-tab="present"
+                    >
+                        Present Day
+                    </button>
+
+                    <button
+                        class="tab-button"
+                        data-tab="visit"
+                    >
+                        Visit
+                    </button>
+
+                </div>
+
+
+                <!-- =================================================
+                     PANELS
+                ================================================== -->
+
+                <section class="content-area">
+
+                    <div
+                        id="panel-history"
+                        class="content-panel active"
+                    ></div>
+
+                    <div
+                        id="panel-gallery"
+                        class="content-panel"
+                    ></div>
+
+                    <div
+                        id="panel-architecture"
+                        class="content-panel"
+                    ></div>
+
+                    <div
+                        id="panel-present"
+                        class="content-panel"
+                    ></div>
+
+                    <div
+                        id="panel-visit"
+                        class="content-panel"
+                    ></div>
+
+                </section>
+
+
+                <!-- =================================================
+                     FEATURE CARDS
+                ================================================== -->
+
+                <section class="feature-section">
+
+                    <button
+                        id="bottom-tour"
+                        class="feature-card"
+                    >
+
+                        <span class="feature-icon">
+                            🧭
+                        </span>
+
+                        <span>
+
+                            <strong>
+                                Guided Heritage Tour
+                            </strong>
+
+                            <small>
+                                Follow a curated route through the monument.
+                            </small>
+
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        id="bottom-quiz"
+                        class="feature-card"
+                    >
+
+                        <span class="feature-icon">
+                            🎓
+                        </span>
+
+                        <span>
+
+                            <strong>
+                                Test Your Knowledge
+                            </strong>
+
+                            <small>
+                                Learn architecture and history interactively.
+                            </small>
+
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        id="bottom-preserve"
+                        class="feature-card"
+                    >
+
+                        <span class="feature-icon">
+                            🛡️
+                        </span>
+
+                        <span>
+
+                            <strong>
+                                Digital Preservation
+                            </strong>
+
+                            <small>
+                                Understand why heritage documentation matters.
+                            </small>
+
+                        </span>
+
+                    </button>
+
+                </section>
+
+            </main>
+
+        </div>
+
+
+        <!-- =====================================================
+             FOOTER
+        ====================================================== -->
+
+        <footer class="site-footer">
+
+            <span>
+                HERITAGEX · MADHYA PRADESH & INDORE LIVING HERITAGE
+            </span>
+
+            <span>
+                Explore · Preserve · Learn · Experience
+            </span>
+
+        </footer>
+
+    </div>
+
+
+    <!-- =====================================================
+         MODAL
+    ====================================================== -->
+
+    <div
+        id="modal"
+        class="modal hidden"
+    >
+
+        <div class="modal-card">
+
+            <button
+                id="modal-close"
+                class="modal-close"
+            >
+                ×
+            </button>
+
+            <div
+                id="modal-content"
+            ></div>
+
+        </div>
+
+    </div>
+
+
+    <script
+        type="module"
+        src="/src/main.js"
+    ></script>
+
+</body>
+
+</html>
