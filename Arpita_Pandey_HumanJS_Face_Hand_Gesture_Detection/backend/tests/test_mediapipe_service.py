@@ -1,0 +1,82 @@
+"""Tests for MediaPipe service."""
+
+import numpy as np
+import pytest
+
+from app.services.mediapipe_service import MediaPipeService
+
+
+@pytest.fixture
+def mediapipe_service():
+    """Create MediaPipe service instance."""
+    return MediaPipeService(initialize_detector=False)
+
+
+def test_normalize_landmarks_dimensions(mediapipe_service):
+    """Test that normalization preserves dimensions."""
+    landmarks = np.random.randn(63)
+    normalized = mediapipe_service.normalize_landmarks(landmarks)
+    assert normalized.shape == (63,)
+
+
+def test_normalize_landmarks_translation_invariance(mediapipe_service):
+    """Test that normalization is translation invariant."""
+    # Create two hands with same shape but different position
+    landmarks1 = np.random.randn(63)
+    landmarks1[:3] = [0.5, 0.5, 0]  # Set wrist position
+
+    # Create second hand (same shape, different position)
+    landmarks2 = landmarks1 + np.tile([0.1, 0.1, 0.0], 21)
+
+    normalized1 = mediapipe_service.normalize_landmarks(landmarks1)
+    normalized2 = mediapipe_service.normalize_landmarks(landmarks2)
+
+    assert np.allclose(normalized1, normalized2)
+
+
+def test_pad_landmarks_for_two_hands_single_hand(mediapipe_service):
+    """Test padding for single hand."""
+    landmarks = [np.ones(63)]
+    handedness = ["Right"]
+
+    features = mediapipe_service.pad_landmarks_for_two_hands(landmarks, handedness)
+
+    assert features.shape == (126,)
+    assert np.allclose(features[:63], 0)
+
+
+def test_pad_landmarks_for_two_hands_two_hands(mediapipe_service):
+    """Test padding for two hands."""
+    landmarks = [np.ones(63), np.full(63, 2)]
+    handedness = ["Left", "Right"]
+
+    features = mediapipe_service.pad_landmarks_for_two_hands(landmarks, handedness)
+
+    assert features.shape == (126,)
+
+
+def test_pad_landmarks_no_hands(mediapipe_service):
+    """Test padding with no hands."""
+    features = mediapipe_service.pad_landmarks_for_two_hands(None, None)
+    assert features.shape == (126,)
+    assert np.allclose(features, 0)
+
+
+def test_swap_hand_slots_exchanges_halves(mediapipe_service):
+    """Swapping exchanges the Left (first 63) and Right (last 63) feature slots."""
+    feature_vector = np.concatenate([np.ones(63), np.full(63, 2.0)])
+    swapped = mediapipe_service.swap_hand_slots(feature_vector)
+
+    assert swapped.shape == (126,)
+    assert np.allclose(swapped[:63], 2.0)
+    assert np.allclose(swapped[63:], 1.0)
+
+
+def test_swap_hand_slots_is_its_own_inverse(mediapipe_service):
+    """Swapping twice returns the original vector."""
+    feature_vector = np.random.randn(126)
+    twice_swapped = mediapipe_service.swap_hand_slots(
+        mediapipe_service.swap_hand_slots(feature_vector)
+    )
+
+    assert np.allclose(twice_swapped, feature_vector)

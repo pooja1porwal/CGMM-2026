@@ -1,0 +1,60 @@
+{
+  "analysis": "Validation-set confidence sweep used to pick the commit_confidence_threshold",
+  "dataset": "RealSign validation split (data/processed/X_val.npy, y_val.npy)",
+  "n_samples": 2179,
+  "argmax_accuracy_no_gate": 0.8811381367599816,
+  "sweep": [
+    {
+      "threshold": 0.3,
+      "coverage": 0.981642955484167,
+      "accuracy_of_kept_frames": 0.8957456755493222
+    },
+    {
+      "threshold": 0.35,
+      "coverage": 0.968793024323084,
+      "accuracy_of_kept_frames": 0.9062055897678826
+    },
+    {
+      "threshold": 0.4,
+      "coverage": 0.9536484625975218,
+      "accuracy_of_kept_frames": 0.9162656400384985
+    },
+    {
+      "threshold": 0.45,
+      "coverage": 0.945387792565397,
+      "accuracy_of_kept_frames": 0.9199029126213593
+    },
+    {
+      "threshold": 0.5,
+      "coverage": 0.9403396053235429,
+      "accuracy_of_kept_frames": 0.9219131283552953
+    },
+    {
+      "threshold": 0.55,
+      "coverage": 0.9279486002753556,
+      "accuracy_of_kept_frames": 0.9282888229475766
+    },
+    {
+      "threshold": 0.6,
+      "coverage": 0.9091326296466269,
+      "accuracy_of_kept_frames": 0.9424533064109036
+    },
+    {
+      "threshold": 0.65,
+      "coverage": 0.8999541073887104,
+      "accuracy_of_kept_frames": 0.9474757776644569
+    },
+    {
+      "threshold": 0.7,
+      "coverage": 0.8907755851307939,
+      "accuracy_of_kept_frames": 0.9541473467284904
+    },
+    {
+      "threshold": 0.75,
+      "coverage": 0.8834327673244607,
+      "accuracy_of_kept_frames": 0.9558441558441558
+    }
+  ],
+  "chosen_commit_confidence_threshold": 0.5,
+  "rationale": "Confidence is only moderately separable between correct and incorrect predictions for this RBF SVC (median confidence for incorrect predictions is still high). 0.75 discarded ~12% of validation frames including many correct ones (e.g. the documented letter I sample at 0.4496 confidence). 0.50 keeps 94.0% of frames while raising kept-frame accuracy from 88.1% (no gate) to 92.2%, and stays within the 0.50-0.55 range suggested for the commit threshold. It is used only to gate whether a frame counts toward the temporal-stability window; the raw/display prediction is shown to the user regardless of confidence."
+}

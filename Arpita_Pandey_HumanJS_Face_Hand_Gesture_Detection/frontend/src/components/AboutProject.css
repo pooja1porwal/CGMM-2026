@@ -1,0 +1,42 @@
+.about-project {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.about-project summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 0.95rem;
+}
+
+.about-project-content {
+  margin-top: 1rem;
+  color: #4a5568;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.about-project-content h3 {
+  margin: 1rem 0 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #2d3748;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.about-project-content h3:first-child {
+  margin-top: 0;
+}
+
+.about-project-content p {
+  margin: 0 0 0.5rem;
+}
+
+.about-project-content ul {
+  margin: 0 0 0.5rem;
+  padding-left: 1.25rem;
+}
