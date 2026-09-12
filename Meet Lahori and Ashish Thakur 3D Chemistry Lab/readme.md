@@ -3,7 +3,7 @@
 An interactive, browser-based 3D chemistry lab built with **React Three Fiber** and **Three.js**, letting students run guided and open-ended chemistry experiments — titrations, thermal reactions, and pH indicator behavior — without any real lab equipment, reagents, or safety risk.
 
 Built by **Meet Lahori** and **Ashish Thakur** for the CGMM-2026 course submission.
-
+https://chemistry-virtual-lab-iota.vercel.app/
 ---
 
 ## 🔬 Overview
